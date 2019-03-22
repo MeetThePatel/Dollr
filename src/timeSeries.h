@@ -10,28 +10,39 @@
 #include "units.h"
 #include "../lib/parser.hpp"
 
-struct DailyTS_Point {
-    boost::gregorian::date date;
+struct TS_Point {
+    std::string ticker;
     Dollar open, high, low, close;
     mpz_class volume;
-    
-    DailyTS_Point(boost::gregorian::date, Dollar, Dollar, Dollar, Dollar, mpz_class);
+};
+
+struct DailyTS_Point : TS_Point {
+    DailyTS_Point(std::string, Dollar, Dollar, Dollar, Dollar, mpz_class);
     
     friend std::ostream& operator<< (std::ostream&, const DailyTS_Point&);
 };
 
-class DailyTS {
-private:
-    std::vector<DailyTS_Point> points;
+struct TS {
+    std::vector<std::pair<boost::gregorian::date, std::vector<TS_Point> > > data;
+};
+
+struct DailyTS : TS {
+    std::vector<std::pair<boost::gregorian::date, std::vector<DailyTS_Point> > > data;
     
-public:
+    // Empty Constructor
     DailyTS();
-    DailyTS(std::vector<DailyTS_Point>);
+    // Full Constructor
+    DailyTS(std::vector<std::pair<boost::gregorian::date, std::vector<DailyTS_Point> > >);
+    // File Path Constructor
     DailyTS(std::string);
     
-    void push_back(DailyTS_Point);
+    void push_back(std::pair<boost::gregorian::date, std::vector<DailyTS_Point> >);
     
     friend std::ostream& operator<< (std::ostream&, const DailyTS&);
+    friend DailyTS operator+ (DailyTS, DailyTS);
 };
+
+void mergePair(std::pair<boost::gregorian::date, std::vector<DailyTS_Point> >&, std::pair<boost::gregorian::date, std::vector<DailyTS_Point> >&);
+
 
 #endif
