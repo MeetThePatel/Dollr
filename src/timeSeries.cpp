@@ -80,3 +80,7 @@ std::ostream& operator<< (std::ostream& os, const DailyTS& x) {
     }
     return os;
 }
+
+bool operator< (std::pair<boost::gregorian::date, std::vector<DailyTS_Point> > x, std::pair<boost::gregorian::date, std::vector<DailyTS_Point> > y) {
+    return std::get<0>(x) < std::get<0>(y);
+}

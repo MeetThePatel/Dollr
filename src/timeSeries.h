@@ -42,6 +42,8 @@ struct DailyTS : TS {
     friend DailyTS operator+ (DailyTS, DailyTS);
 };
 
+bool operator< (std::pair<boost::gregorian::date, std::vector<DailyTS_Point> >, std::pair<boost::gregorian::date, std::vector<DailyTS_Point> >);
+
 void mergePair(std::pair<boost::gregorian::date, std::vector<DailyTS_Point> >&, std::pair<boost::gregorian::date, std::vector<DailyTS_Point> >&);
 
 
