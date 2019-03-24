@@ -1,5 +1,6 @@
 #include <iostream>
 #include "src/timeSeries.h"
+#include "src/indicators/movingAverages.h"
 #include <vector>
 #include <curl.h>
 
@@ -12,10 +13,15 @@
 //     [ ] Create new time series for Guppy Multiple Moving Average (GMMA)
 
 int main() {
-    DailyTS aaplcopy("/Users/meetpatel/XCodeProjects/Dollr/Dollr/AAPLCOPY.csv");
-    std::sort(aaplcopy.data.begin(), aaplcopy.data.end());
-    std::cout << aaplcopy;
+    DailyTS spy("/Users/meetpatel/XCodeProjects/Dollr/Dollr/SPY.csv");
+    DailyTS dia("/Users/meetpatel/XCodeProjects/Dollr/Dollr/DIA.csv");
+    
+    auto x = spy + dia;
+    std::cout << x;
+//    SimpleMovingAverage x(spy, "SPY", 5);
+//    std::cout << x;
+    
+//    auto y = spy + x;
     
     return 0;
-
 }

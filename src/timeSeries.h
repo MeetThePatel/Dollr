@@ -10,13 +10,19 @@
 #include "units.h"
 #include "../lib/parser.hpp"
 
+using namespace std;
+using namespace boost::gregorian;
+
 struct TS_Point {
     std::string ticker;
-    Dollar open, high, low, close;
-    mpz_class volume;
+    
+    friend std::ostream& operator<< (std::ostream&, const TS_Point);
 };
 
 struct DailyTS_Point : TS_Point {
+    Dollar open, high, low, close;
+    mpz_class volume;
+    
     DailyTS_Point(std::string, Dollar, Dollar, Dollar, Dollar, mpz_class);
     
     friend std::ostream& operator<< (std::ostream&, const DailyTS_Point&);
@@ -24,16 +30,23 @@ struct DailyTS_Point : TS_Point {
 
 struct TS {
     std::vector<std::pair<boost::gregorian::date, std::vector<TS_Point> > > data;
+    
+    friend std::ostream& operator<< (std::ostream&, const TS&);
 };
+
+template <typename T>
+void mergePair(std::pair<boost::gregorian::date, std::vector<T> > &x,
+               std::pair<boost::gregorian::date, std::vector<T> > &y) {
+    if (std::get<0>(x) == std::get<0>(y)) {
+        std::get<1>(x).insert(std::get<1>(x).end(), std::get<1>(y).begin(), std::get<1>(y).end());
+    }
+}
 
 struct DailyTS : TS {
     std::vector<std::pair<boost::gregorian::date, std::vector<DailyTS_Point> > > data;
     
-    // Empty Constructor
     DailyTS();
-    // Full Constructor
     DailyTS(std::vector<std::pair<boost::gregorian::date, std::vector<DailyTS_Point> > >);
-    // File Path Constructor
     DailyTS(std::string);
     
     void push_back(std::pair<boost::gregorian::date, std::vector<DailyTS_Point> >);
@@ -43,8 +56,8 @@ struct DailyTS : TS {
 };
 
 bool operator< (std::pair<boost::gregorian::date, std::vector<DailyTS_Point> >, std::pair<boost::gregorian::date, std::vector<DailyTS_Point> >);
-
-void mergePair(std::pair<boost::gregorian::date, std::vector<DailyTS_Point> >&, std::pair<boost::gregorian::date, std::vector<DailyTS_Point> >&);
+//
+//void mergePair(std::pair<boost::gregorian::date, std::vector<DailyTS_Point> >&, std::pair<boost::gregorian::date, std::vector<DailyTS_Point> >&);
 
 
 #endif

@@ -48,14 +48,14 @@ DailyTS::DailyTS(std::string x) {
         data.push_back(tup);
     }
 }
-
-void mergePair(std::pair<boost::gregorian::date, std::vector<DailyTS_Point> > &x, std::pair<boost::gregorian::date, std::vector<DailyTS_Point> > &y) {
-    
-    if (std::get<0>(x) == std::get<0>(y)) {
-        std::get<1>(x).insert(std::get<1>(x).end(), std::get<1>(y).begin(), std::get<1>(y).end());
-    }
-    
-}
+//
+//void mergePair(std::pair<boost::gregorian::date, std::vector<DailyTS_Point> > &x, std::pair<boost::gregorian::date, std::vector<DailyTS_Point> > &y) {
+//    
+//    if (std::get<0>(x) == std::get<0>(y)) {
+//        std::get<1>(x).insert(std::get<1>(x).end(), std::get<1>(y).begin(), std::get<1>(y).end());
+//    }
+//    
+//}
 
 DailyTS operator+ (DailyTS x, DailyTS y) {
     DailyTS ret = x;
@@ -73,9 +73,9 @@ void DailyTS::push_back(std::pair<boost::gregorian::date, std::vector<DailyTS_Po
 
 std::ostream& operator<< (std::ostream& os, const DailyTS& x) {
     for (auto &i : x.data) {
-        std::cout << std::get<0>(i) << std::endl;
+        os << std::get<0>(i) << std::endl;
         for (auto &j : std::get<1>(i)) {
-            std::cout << "     " << j;
+            os << "     " << j << std::endl;
         }
     }
     return os;
