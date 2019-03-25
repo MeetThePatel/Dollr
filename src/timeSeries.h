@@ -42,6 +42,10 @@ struct TimeSeries {
     TimeSeries<R, T>(string x) : name(x), data(vector<pair<date, vector<T> > >{}){};
     TimeSeries<R, T>(vector<pair<date, vector<T> > > x) : name(""), data(x){};
     TimeSeries<R, T>(string x, vector<pair<date, vector<T> > > y) : name(x), data(y){};
+    
+    void push_back(pair<date, vector<T> > x) {
+        data.push_back(x);
+    }
 };
 
 template <class T>
