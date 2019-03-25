@@ -44,6 +44,17 @@ struct TimeSeries {
     TimeSeries<R, T>(string x, vector<pair<date, vector<T> > > y) : name(x), data(y){};
 };
 
+template <class T>
+pair<date, vector<T> > operator+ (const pair<date, vector<T> > x, const pair<date, vector<T> > y) {
+    auto ret = x;
+    if (get<0>(x) == get<0>(y)) {
+        get<1>(ret).insert(get<1>(ret).end(), get<1>(y).begin(), get<1>(y).end());
+    } else {
+        throw "CANNOT ADD PAIR";
+    }
+    return ret;
+}
+
 template <TimeSeries_Resolution R, class T>
 ostream& operator<< (ostream& os, const TimeSeries<R, T>& x) {
     os << x.name << endl;
@@ -64,8 +75,6 @@ struct OHLCV_Point {
     
     friend ostream& operator<< (ostream&, const OHLCV_Point&);
 };
-
-
 
 using OHLCV_TimeSeries_Point = TimeSeries_Point<OHLCV_Point>;
 using Tick_OHLCV_TimeSeries = TimeSeries<TimeSeries_Resolution::Tick, OHLCV_TimeSeries_Point>;

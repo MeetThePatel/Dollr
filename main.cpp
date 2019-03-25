@@ -16,17 +16,20 @@ using namespace boost::gregorian;
 int main() {
     
     OHLCV_Point test_ohlcv_point {Dollar(5), Dollar(6), Dollar(4), Dollar(4), 34823};
-    OHLCV_TimeSeries_Point test_point ("AAPL", test_ohlcv_point);
+    vector<OHLCV_Point> test_vec = {test_ohlcv_point};
+    
+    //pair<date, vector<T> >& x
+    
+    pair<date, vector<OHLCV_Point> > x = make_pair(from_string("2012-5-5"), test_vec);
     
     OHLCV_Point test_ohlcv_point2 {Dollar(5), Dollar(6), Dollar(4), Dollar(4), 34823};
-    OHLCV_TimeSeries_Point test_point2 ("GOOG", test_ohlcv_point2);
+    vector<OHLCV_Point> test_vec2 = {test_ohlcv_point2};
     
-    vector<TimeSeries_Point<OHLCV_Point> > test_vec {test_point, test_point2};
-    vector<pair<date, vector<OHLCV_TimeSeries_Point> > > vec {make_pair(from_string("2012-5-5"), test_vec)};
+    pair<date, vector<OHLCV_Point> > y = make_pair(from_string("2012-5-5"), test_vec2);
     
-    Daily_OHLCV_TimeSeries x("Test Time Series", vec);
+    auto z = x + y;
     
-    cout << x;
+    
     
     return 0;
 }
