@@ -13,51 +13,63 @@
 using namespace std;
 using namespace boost::gregorian;
 
-struct TS_Point {
-    std::string ticker;
-    
-    friend std::ostream& operator<< (std::ostream&, const TS_Point);
+enum class TimeSeries_Resolution {
+    Tick,
+    Minute,
+    Day
 };
 
-struct DailyTS_Point : TS_Point {
+template <class T>
+struct TimeSeries_Point {
+    string ticker;
+    T data;
+    
+    TimeSeries_Point<T>(string ticker, T data) : ticker(ticker), data(data){};
+};
+
+template <class T>
+ostream& operator<< (ostream& os, const TimeSeries_Point<T>& x) {
+    os << x.ticker << ": " << x.data;
+    return os;
+}
+
+template <TimeSeries_Resolution R, class T>
+struct TimeSeries {
+    string name;
+    vector<pair<date, vector<T> > > data;
+    
+    TimeSeries<R, T>() {};
+    TimeSeries<R, T>(string x) : name(x), data(vector<pair<date, vector<T> > >{}){};
+    TimeSeries<R, T>(vector<pair<date, vector<T> > > x) : name(""), data(x){};
+    TimeSeries<R, T>(string x, vector<pair<date, vector<T> > > y) : name(x), data(y){};
+};
+
+template <TimeSeries_Resolution R, class T>
+ostream& operator<< (ostream& os, const TimeSeries<R, T>& x) {
+    os << x.name << endl;
+    for (auto const &i : x.data) {
+        os << get<0>(i) << endl;
+        for (auto const &j : get<1>(i)) {
+            os << "   " << j;
+        }
+    }
+    return os;
+}
+
+struct OHLCV_Point {
     Dollar open, high, low, close;
     mpz_class volume;
     
-    DailyTS_Point(std::string, Dollar, Dollar, Dollar, Dollar, mpz_class);
+    OHLCV_Point(Dollar open, Dollar high, Dollar low, Dollar close, mpz_class volume) : open(open), high(high), low(low), close(close), volume(volume) {};
     
-    friend std::ostream& operator<< (std::ostream&, const DailyTS_Point&);
+    friend ostream& operator<< (ostream&, const OHLCV_Point&);
 };
 
-struct TS {
-    std::vector<std::pair<boost::gregorian::date, std::vector<TS_Point> > > data;
-    
-    friend std::ostream& operator<< (std::ostream&, const TS&);
-};
 
-template <typename T>
-void mergePair(std::pair<boost::gregorian::date, std::vector<T> > &x,
-               std::pair<boost::gregorian::date, std::vector<T> > &y) {
-    if (std::get<0>(x) == std::get<0>(y)) {
-        std::get<1>(x).insert(std::get<1>(x).end(), std::get<1>(y).begin(), std::get<1>(y).end());
-    }
-}
 
-struct DailyTS : TS {
-    std::vector<std::pair<boost::gregorian::date, std::vector<DailyTS_Point> > > data;
-    
-    DailyTS();
-    DailyTS(std::vector<std::pair<boost::gregorian::date, std::vector<DailyTS_Point> > >);
-    DailyTS(std::string);
-    
-    void push_back(std::pair<boost::gregorian::date, std::vector<DailyTS_Point> >);
-    
-    friend std::ostream& operator<< (std::ostream&, const DailyTS&);
-    friend DailyTS operator+ (DailyTS, DailyTS);
-};
-
-bool operator< (std::pair<boost::gregorian::date, std::vector<DailyTS_Point> >, std::pair<boost::gregorian::date, std::vector<DailyTS_Point> >);
-//
-//void mergePair(std::pair<boost::gregorian::date, std::vector<DailyTS_Point> >&, std::pair<boost::gregorian::date, std::vector<DailyTS_Point> >&);
-
+using OHLCV_TimeSeries_Point = TimeSeries_Point<OHLCV_Point>;
+using Tick_OHLCV_TimeSeries = TimeSeries<TimeSeries_Resolution::Tick, OHLCV_TimeSeries_Point>;
+using Minute_OHLCV_TimeSeries = TimeSeries<TimeSeries_Resolution::Minute, OHLCV_TimeSeries_Point>;
+using Daily_OHLCV_TimeSeries = TimeSeries<TimeSeries_Resolution::Day, OHLCV_TimeSeries_Point>;
 
 #endif
